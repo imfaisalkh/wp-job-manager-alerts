@@ -1,0 +1,1 @@
+wp-job-manager-alerts
