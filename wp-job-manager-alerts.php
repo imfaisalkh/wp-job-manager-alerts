@@ -3,11 +3,11 @@
  * Plugin Name: WP Job Manager - Alerts
  * Plugin URI: https://wpjobmanager.com/add-ons/job-alerts/
  * Description: Allow users to subscribe to job alerts for their searches. Once registered, users can access a 'My Alerts' page which you can create with the shortcode [job_alerts].
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: Automattic
  * Author URI: https://wpjobmanager.com
  * Requires at least: 4.1
- * Tested up to: 4.9
+ * Tested up to: 5.1
  *
  * WPJM-Product: wp-job-manager-alerts
  *
@@ -32,7 +32,7 @@ class WP_Job_Manager_Alerts {
 	 */
 	public function __construct() {
 		// Define constants
-		define( 'JOB_MANAGER_ALERTS_VERSION', '1.5.1' );
+		define( 'JOB_MANAGER_ALERTS_VERSION', '1.5.2' );
 		define( 'JOB_MANAGER_ALERTS_PLUGIN_DIR', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 		define( 'JOB_MANAGER_ALERTS_PLUGIN_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 
@@ -60,6 +60,8 @@ class WP_Job_Manager_Alerts {
 
 		// Add actions
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
+		add_filter( 'job_manager_enhanced_select_enabled', array( $this, 'use_enhanced_select' ) );
+		add_filter( 'job_manager_enqueue_frontend_style', array( $this, 'use_wpjm_core_frontend_style' ) );
 		add_filter( 'job_manager_settings', array( $this, 'settings' ) );
 		add_filter( 'job_manager_job_filters_showing_jobs_links', array( $this, 'alert_link' ), 10, 2 );
 		add_action( 'single_job_listing_end', array( $this, 'single_alert_link' ) );
@@ -159,13 +161,56 @@ class WP_Job_Manager_Alerts {
 	 * @return void
 	 */
 	public function frontend_scripts() {
-		wp_register_script( 'job-alerts', JOB_MANAGER_ALERTS_PLUGIN_URL . '/assets/js/job-alerts.min.js', array( 'jquery', 'chosen' ), JOB_MANAGER_ALERTS_VERSION, true );
+		wp_register_script( 'job-alerts', JOB_MANAGER_ALERTS_PLUGIN_URL . '/assets/js/job-alerts.min.js', array( 'jquery', 'select2' ), JOB_MANAGER_ALERTS_VERSION, true );
 
 		wp_localize_script( 'job-alerts', 'job_manager_alerts', array(
-			'i18n_confirm_delete' => __( 'Are you sure you want to delete this alert?', 'wp-job-manager-alerts' )
+			'i18n_confirm_delete' => __( 'Are you sure you want to delete this alert?', 'wp-job-manager-alerts' ),
+			'is_rtl' => is_rtl(),
 		) );
 
 		wp_enqueue_style( 'job-alerts-frontend', JOB_MANAGER_ALERTS_PLUGIN_URL . '/assets/css/frontend.css' );
+	}
+
+	/**
+	 * Check if we should have WPJM core enqueue enhanced select.
+	 *
+	 * @param bool $use_enhanced_select True if we should have WPJM core use enhanced select.
+	 * @return bool
+	 */
+	public function use_enhanced_select( $use_enhanced_select ) {
+		if ( $this->is_shortcode_page() ) {
+			return true;
+		}
+		return $use_enhanced_select;
+	}
+
+	/**
+	 * Check if we should have WPJM core enqueue its frontend styles.
+	 *
+	 * @param bool $use_frontend_style True if we should have WPJM core enqueue frontend styles.
+	 * @return bool
+	 */
+	public function use_wpjm_core_frontend_style( $use_frontend_style ) {
+		if ( $this->is_shortcode_page() ) {
+			return true;
+		}
+		return $use_frontend_style;
+	}
+
+	/**
+	 * Checks if the current page is the `[job_alerts]` page.
+	 *
+	 * @return bool
+	 */
+	private function is_shortcode_page() {
+		global $post;
+
+		$content = null;
+		if ( is_singular() && is_a( $post, 'WP_Post' ) ) {
+			$content = $post->post_content;
+		}
+
+		return has_shortcode( $content, 'job_alerts' );
 	}
 
 	/**

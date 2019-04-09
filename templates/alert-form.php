@@ -8,7 +8,7 @@
 * @author      Automattic
 * @package     WP Job Manager - Alerts
 * @category    Template
-* @version     1.5.0
+* @version     1.5.2
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						'orderby'         => 'name',
 						'taxonomy'        => 'job_listing_region',
 						'name'            => 'alert_regions',
-						'class'           => 'alert_regions job-manager-chosen-select',
+						'class'           => 'alert_regions job-manager-enhanced-select',
 						'hide_empty'      => 0,
 						'selected'        => $alert_regions,
 						'placeholder'     => __( 'Any region', 'wp-job-manager-alerts' )
@@ -98,7 +98,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<fieldset>
 		<label for="alert_job_type"><?php _e( 'Job Type', 'wp-job-manager-alerts' ); ?></label>
 		<div class="field">
-			<select name="alert_job_type[]" data-placeholder="<?php _e( 'Any job type', 'wp-job-manager-alerts' ); ?>" id="alert_job_type" multiple="multiple" class="job-manager-chosen-select">
+			<select name="alert_job_type[]" data-placeholder="<?php _e( 'Any job type', 'wp-job-manager-alerts' ); ?>" id="alert_job_type" multiple="multiple" class="job-manager-enhanced-select">
 				<?php
 					$terms = get_job_listing_types();
 					foreach ( $terms as $term )

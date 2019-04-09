@@ -31,6 +31,9 @@ To install this plugin, please refer to the guide here: [http://codex.wordpress.
 
 == Changelog ==
 
+= 1.5.2 =
+* Adds support for WP Job Manager 1.32.0's new asset enqueuing and Select2 usage.
+
 = 1.5.1 =
 * Fixes issue of alerts getting scheduled too closely together.
 * Stores search terms in meta data so it doesn't affect the term's post count. 
@@ -50,7 +53,7 @@ To install this plugin, please refer to the guide here: [http://codex.wordpress.
 * Improved appearance of listings in emails.
 * Fix text domain.
 
-= 1.4.0 =o
+= 1.4.0 =
 * Setup alerts for job tags (if installed). Requires tags 1.3.7+.
 * New job_manager_alerts_alert_schedules filer to control and add custom schedules.
 * Use ob_get_clean() for add/edit alert forms.
